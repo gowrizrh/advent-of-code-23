@@ -1,17 +1,70 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    val debug = false;
+
+    fun parse(line: String): Sequence<MatchResult> {
+        // Lookahead search
+        val reg = Regex("(?=(one|two|three|four|five|six|seven|eight|nine|[1-9]))")
+        return reg.findAll(line)
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun match(token: String): String {
+        return when (token) {
+            "one" -> {
+                "1"
+            }
+
+            "two" -> {
+                "2"
+            }
+
+            "three" -> {
+                "3"
+            }
+
+            "four" -> {
+                "4"
+            }
+
+            "five" -> {
+                "5"
+            }
+
+            "six" -> {
+                "6"
+            }
+
+            "seven" -> {
+                "7"
+            }
+
+            "eight" -> {
+                "8"
+            }
+
+            "nine" -> {
+                "9"
+            }
+
+            else -> {
+                token
+            }
+        }
     }
 
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+    val lines = readInput("Day01")
 
-    val input = readInput("Day01")
-    part1(input).println()
-    part2(input).println()
+    val numbers = mutableListOf<Int>()
+
+    for (line in lines) {
+        val matches = parse(line)
+        val firstDigit = match(matches.first().groupValues.last())
+        val lastDigit = match(matches.last().groupValues.last())
+        val number = "$firstDigit$lastDigit".toInt()
+
+        if (debug) number.println()
+
+        numbers.add(number)
+    }
+
+    println(numbers.sumOf { it })
 }
