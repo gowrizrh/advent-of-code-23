@@ -1,8 +1,5 @@
 fun main() {
-    val debug = false;
-
     fun parse(line: String): Sequence<MatchResult> {
-        // Lookahead search
         val reg = Regex("(?=(one|two|three|four|five|six|seven|eight|nine|[1-9]))")
         return reg.findAll(line)
     }
@@ -51,20 +48,18 @@ fun main() {
         }
     }
 
-    val lines = readInput("Day01")
-
-    val numbers = mutableListOf<Int>()
-
-    for (line in lines) {
-        val matches = parse(line)
-        val firstDigit = match(matches.first().groupValues.last())
-        val lastDigit = match(matches.last().groupValues.last())
-        val number = "$firstDigit$lastDigit".toInt()
-
-        if (debug) number.println()
-
-        numbers.add(number)
+    fun cast(result: Sequence<MatchResult>): Int {
+        val firstDigit = match(result.first().groupValues.last())
+        val lastDigit = match(result.last().groupValues.last())
+        return "$firstDigit$lastDigit".toInt()
     }
 
-    println(numbers.sumOf { it })
+    val lines = readInput("Day01")
+
+    val answer = lines.asSequence()
+        .map { parse(it) }
+        .map { cast(it) }
+        .sum()
+
+    println(answer)
 }
