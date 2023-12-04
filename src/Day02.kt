@@ -34,5 +34,38 @@ fun main() {
         .println()
 
     // Part 2
-}
+    lines
+        .map { line ->
+            val game = line.split(": ").last()
 
+            val colourMap = mutableMapOf<String, Int>()
+
+            game.split("; ")
+                .map { set ->
+                    set.split(", ")
+                        .map {
+                            val split = it.split(" ")
+                            val colour = split.last()
+                            val frequency = split.first().toInt()
+
+                            colourMap.compute(colour) { _, value ->
+                                if (value == null || frequency > value) {
+                                    frequency
+                                } else {
+                                    value
+                                }
+                            }
+                        }
+                }
+
+            colourMap
+        }
+        .map { map ->
+            map.entries.fold(1) { acc, mutableEntry ->
+                acc * mutableEntry.value
+            }
+        }
+        .sumOf { it }
+        .println()
+
+}
