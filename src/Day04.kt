@@ -3,15 +3,34 @@ import kotlin.math.pow
 val regex = Regex("\\s+")
 
 fun main() {
-    val input = readInput("Day04")
 
-    // Part 1
+    val input = readInput("Day04")
+    val scratchcards = MutableList(input.size) { 1 }
+
+    // Part 1, Part 2
     input
+        .asSequence()
         .map { split(it) }
         .map { match(it) }
+        .mapIndexed { index, matches ->
+            val wins = matches.size
+
+            (0..<scratchcards[index]).forEach { _ ->
+                (index..<index + wins)
+                    .forEach {
+                        scratchcards[it + 1] = scratchcards[it + 1] + 1
+                    }
+            }
+
+            matches
+        }
         .map { score(it) }
-        .sumOf { it }
+        .sum()
         .println()
+        .also {
+            scratchcards.sum().println()
+        }
+
 }
 
 fun split(card: String): List<String> {
