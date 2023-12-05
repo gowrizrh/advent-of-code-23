@@ -14,8 +14,9 @@ fun main() {
         .map { match(it) }
         .mapIndexed { index, matches ->
             val wins = matches.size
+            val copies = 0..<scratchcards[index]
 
-            (0..<scratchcards[index]).forEach { _ ->
+            copies.forEach { _ ->
                 (index..<index + wins)
                     .forEach {
                         scratchcards[it + 1] = scratchcards[it + 1] + 1
