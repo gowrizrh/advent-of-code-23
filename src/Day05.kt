@@ -1,3 +1,5 @@
+import kotlin.time.measureTime
+
 val withMapName = Regex(" map:")
 val withString = Regex("[a-z\\-]+")
 
@@ -13,11 +15,10 @@ val pipeline = listOf(
 
 fun main() {
     val input = readInput("Day05")
-    val seeds = input[0].split(": ").last().split(" ").map { it.toInt() }
-//    seeds.println()
+    val seeds = input[0].split(": ").last().split(" ").map { it.toUInt() }
     input.removeFirst()
 
-    val almanacMaps = mutableMapOf<String, MutableMap<String, MutableList<Pair<Int, Int>>>>()
+    val almanacMaps = mutableMapOf<String, MutableMap<String, MutableList<Pair<UInt, UInt>>>>()
 
     var currentMap = ""
 
@@ -32,16 +33,15 @@ fun main() {
                 mapName,
                 mutableMapOf("source" to mutableListOf(), "destination" to mutableListOf())
             )
-//            mapName.println()
             currentMap = mapName
             continue
         }
 
         val almanac = mapName.split(" ")
 
-        val source = almanac[1].toInt()
-        val destination = almanac[0].toInt()
-        val range = almanac[2].toInt()
+        val source = almanac[1].toUInt()
+        val destination = almanac[0].toUInt()
+        val range = almanac[2].toUInt()
 
         val sourceEnd = source + range;
         val destinationEnd = destination + range;
@@ -50,57 +50,35 @@ fun main() {
         almanacMaps[currentMap]!!["destination"]!!.add(Pair(destination, destinationEnd))
     }
 
+    val locations = mutableListOf<UInt>()
 
-    // WIP
-    seeds
-        .map { item ->
+    val time = measureTime {
+        for (seed in seeds) {
+            var mappedValue = seed
 
-            val map = pipeline[0]
+            for (map in pipeline) {
 
-            almanacMaps[map]!!["source"]!!.foldIndexed(0) { i, _, pair ->
-                if (item >= pair.first && item < pair.second) {
-                    val difference = item - pair.first
-                    val destinationRangeStart = almanacMaps[map]!!["destination"]!![i].first
+                val mapMatch = almanacMaps[map]!!["source"]!!.indexOfFirst { (first, second) ->
+                    mappedValue in first..<second
+                }
 
-                    destinationRangeStart + difference
-                } else {
-                    item
+                if (mapMatch >= 0) {
+                    val source = almanacMaps[map]!!["source"]!!
+                        .elementAt(mapMatch)
+
+                    val destination = almanacMaps[map]!!["destination"]!!
+                        .elementAt(mapMatch)
+
+                    val difference = mappedValue - source.first
+
+                    mappedValue = (destination.first + difference)
                 }
             }
+
+            locations.add(mappedValue)
         }
-        .also { println(it) }
-        .map { item ->
+    }
 
-            val map = pipeline[1]
-
-            almanacMaps[map]!!["source"]!!.foldIndexed(0) { i, _, pair ->
-                if (item >= pair.first && item < pair.second) {
-                    val difference = item - pair.first
-                    val destinationRangeStart = almanacMaps[map]!!["destination"]!![i].first
-
-                    destinationRangeStart + difference
-                } else {
-                    item
-                }
-            }
-        }
-        .also { println(it) }
-        .map { item ->
-
-            val map = pipeline[2]
-
-            almanacMaps[map]!!["source"]!!
-                .foldIndexed(0) { i, _, pair ->
-                if (item >= pair.first && item < pair.second) {
-                    val difference = item - pair.first
-                    val destinationRangeStart = almanacMaps[map]!!["destination"]!![i].first
-
-                    destinationRangeStart + difference
-                } else {
-                    item
-                }
-            }
-        }.println()
-
-
+    locations.toSortedSet().println()
+    time.println()
 }
