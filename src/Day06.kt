@@ -1,3 +1,9 @@
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.pow
+import kotlin.math.sqrt
+import kotlin.time.measureTime
+
 val bySpaces = Regex("\\s+")
 
 fun part1(input: List<String>) {
@@ -31,31 +37,31 @@ fun part1(input: List<String>) {
 }
 
 fun part2(input: List<String>) {
-    val time = input.first().split(":").last().trim().toInt()
-    val recordDistance = input.last().split(":").last().trim().toULong()
-    val choices = 0..time
+    val time = input.first().split(":").last().trim().toFloat()
+    val recordDistance = input.last().split(":").last().trim().toDouble()
 
-    choices
-        .map { possible ->
-            // distance = speed x time
-            possible.toULong() * (time.toULong() - possible.toULong())
-        }
-        .filter { distance ->
-            distance > recordDistance
-        }
-        .size
-        .println()
+    val a = time - sqrt(time.pow(2) - 4 * recordDistance)
+    val b = time + sqrt(time.pow(2) - 4 * recordDistance)
+
+    val lowerBound = floor(a / 2.0)
+    val upperBound = ceil(b / 2.0)
+
+    (upperBound - lowerBound - 1.0)
+        .toInt().println()
 
     return
-
 }
 
 fun main() {
     println("--- Day 6: Wait For It ---")
-
     val input = readInput("Day06")
-    part1(input)
-
     val inputTwo = readInput("Day06_2")
-    part2(inputTwo)
+
+    val time = measureTime {
+        part1(input)
+
+        part2(inputTwo)
+    }
+
+    time.println()
 }
