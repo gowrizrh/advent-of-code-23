@@ -4,13 +4,11 @@ fun part1(input: List<String>) {
     val times = input.first().split(":").last().trim().split(bySpaces)
     val distances = input.last().split(":").last().trim().split(bySpaces)
 
-    // equal number of races so times and distances size are always the same
-    val numberOfRaces = times.indices
+    // equal number of races so just assume times and distances size are the same
+    val races = times.indices
 
-    (numberOfRaces)
+    races
         .map {
-            println("Race $it: Time: ${times[it]}ms, Distance: ${distances[it]}mm")
-
             val time = times[it].toInt()
             val recordDistance = distances[it].toInt()
             val choices = 0..time
@@ -53,8 +51,9 @@ fun part2(input: List<String>) {
 }
 
 fun main() {
-    val input = readInput("Day06")
+    println("--- Day 6: Wait For It ---")
 
+    val input = readInput("Day06")
     part1(input)
 
     val inputTwo = readInput("Day06_2")
