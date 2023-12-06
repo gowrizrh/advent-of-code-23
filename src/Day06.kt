@@ -33,7 +33,7 @@ fun part1(input: List<String>) {
 fun part2(input: List<String>) {
     val time = input.first().split(":").last().trim().toInt()
     val recordDistance = input.last().split(":").last().trim().toULong()
-    val choices = 9..time
+    val choices = 0..time
 
     choices
         .map { possible ->
