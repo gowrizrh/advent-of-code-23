@@ -2,6 +2,7 @@ import kotlin.time.measureTime
 
 val withMapName = Regex(" map:")
 val withString = Regex("[a-z\\-]+")
+val withSeedRanges = Regex("(?<start>\\d+) (?<range>\\d+)")
 
 val pipeline = listOf(
     "seed-to-soil",
@@ -15,10 +16,10 @@ val pipeline = listOf(
 
 fun main() {
     val input = readInput("Day05")
-    val seeds = input[0].split(": ").last().split(" ").map { it.toUInt() }
+    val seeds = input[0].split(": ").last()
     input.removeFirst()
 
-    val almanacMaps = mutableMapOf<String, MutableMap<String, MutableList<Pair<UInt, UInt>>>>()
+    val almanacMaps = mutableMapOf<String, MutableMap<String, MutableList<Pair<ULong, ULong>>>>()
 
     var currentMap = ""
 
@@ -39,9 +40,9 @@ fun main() {
 
         val almanac = mapName.split(" ")
 
-        val source = almanac[1].toUInt()
-        val destination = almanac[0].toUInt()
-        val range = almanac[2].toUInt()
+        val source = almanac[1].toULong()
+        val destination = almanac[0].toULong()
+        val range = almanac[2].toULong()
 
         val sourceEnd = source + range;
         val destinationEnd = destination + range;
@@ -50,35 +51,44 @@ fun main() {
         almanacMaps[currentMap]!!["destination"]!!.add(Pair(destination, destinationEnd))
     }
 
-    val locations = mutableListOf<UInt>()
+    val locations = mutableListOf<ULong>()
+    var lowest: ULong = ULong.MAX_VALUE
 
     val time = measureTime {
-        for (seed in seeds) {
-            var mappedValue = seed
+        for (seedPair in withSeedRanges.findAll(seeds)) {
+            val seedStart = seedPair.groups["start"]!!.value.toULong()
+            val range = seedPair.groups["range"]!!.value.toULong()
+            val seedEnd = seedStart + range
 
-            for (map in pipeline) {
+            (seedStart..<seedEnd)
+                .forEach { seed ->
+                    var mappedValue = seed
 
-                val mapMatch = almanacMaps[map]!!["source"]!!.indexOfFirst { (first, second) ->
-                    mappedValue in first..<second
+                    for (map in pipeline) {
+                        val mapMatch = almanacMaps[map]!!["source"]!!.indexOfFirst { (first, second) ->
+                            mappedValue in first..<second
+                        }
+
+                        if (mapMatch >= 0) {
+                            val source = almanacMaps[map]!!["source"]!!
+                                .elementAt(mapMatch)
+
+                            val destination = almanacMaps[map]!!["destination"]!!
+                                .elementAt(mapMatch)
+
+                            val difference = mappedValue - source.first
+
+                            mappedValue = (destination.first + difference)
+                        }
+                    }
+
+                    if (mappedValue < lowest) {
+                        lowest = mappedValue
+                    }
                 }
-
-                if (mapMatch >= 0) {
-                    val source = almanacMaps[map]!!["source"]!!
-                        .elementAt(mapMatch)
-
-                    val destination = almanacMaps[map]!!["destination"]!!
-                        .elementAt(mapMatch)
-
-                    val difference = mappedValue - source.first
-
-                    mappedValue = (destination.first + difference)
-                }
-            }
-
-            locations.add(mappedValue)
         }
     }
 
-    locations.toSortedSet().println()
+    lowest.println()
     time.println()
 }
