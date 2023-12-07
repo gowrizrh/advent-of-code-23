@@ -1,4 +1,4 @@
-val power = mapOf(
+val power = mutableMapOf(
     'A' to 14,
     'K' to 13,
     'Q' to 12,
@@ -12,7 +12,6 @@ val power = mapOf(
     '4' to 4,
     '3' to 3,
     '2' to 2,
-    'J' to 1
 )
 
 fun main() {
@@ -45,6 +44,8 @@ fun main() {
         .also(::println)
 
     // Part 2
+    power['J'] = 1;
+
     input
         .asSequence()
         .map { game ->
