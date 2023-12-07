@@ -1,3 +1,5 @@
+import kotlin.IllegalArgumentException
+
 val power = mutableMapOf(
     'A' to 14,
     'K' to 13,
@@ -25,7 +27,7 @@ fun main() {
             val cards = game.first().map { it }
             val bid = game.last().toInt()
 
-            val type = game.first()
+            val type = cards
                 .groupingBy { it }
                 .eachCount()
                 .map { it.value to it.key }
@@ -34,7 +36,7 @@ fun main() {
                 .toSortedMap()
                 .let { fold(it) }
 
-            Hand(cards, bid, type!!)
+            Hand(cards, bid, type)
         }
         .sorted()
         .mapIndexed { index, hand ->
@@ -55,28 +57,23 @@ fun main() {
             val cards = game.first().map { it }
             val bid = game.last().toInt()
 
-            val type = game.first()
+            val type = cards
                 .groupingBy { it }
                 .eachCount()
                 .let {
-                    val newMap = it.toMutableMap()
+                    val hand = it.toMutableMap()
 
-                    if (newMap.contains('J') && newMap['J'] != 5) { // when everything is J then it's five of a kind
-                        val bestMatch = it.maxBy { entry ->
-                            if (entry.key != 'J') {
-                                entry.value
-                            } else {
-                                0
-                            }
-                        }.key
+                    if (hand.contains('J') && hand['J'] != 5) { // when everything is J then it's five of a kind
+                        val key = it
+                            .filter { entry -> entry.key != 'J' }
+                            .maxBy { entry -> entry.value }
+                            .key
 
-//                        println("$bestMatch: ${newMap[bestMatch]!! + newMap['J']!!}")
-
-                        newMap[bestMatch] = it[bestMatch]!! + it['J']!!
-                        newMap.remove('J')
+                        hand[key] = it[key]!! + it['J']!!
+                        hand.remove('J')
                     }
 
-                    newMap
+                    hand
                 }
                 .map { it.value to it.key }
                 .groupingBy { it.first }
@@ -84,7 +81,9 @@ fun main() {
                 .toSortedMap()
                 .let { fold(it) }
 
-            Hand(cards, bid, type!!)
+
+
+            Hand(cards, bid, type)
         }
         .sorted()
         .mapIndexed { index, hand ->
@@ -92,10 +91,9 @@ fun main() {
         }
         .sum()
         .also(::println)
-
 }
 
-fun fold(type: Map<Int, Int>): Type? {
+fun fold(type: Map<Int, Int>): Type {
     return when (type) {
         mapOf(1 to 5) -> Type.HIGHCARD
         mapOf(1 to 3, 2 to 1) -> Type.ONEPAIR
@@ -104,7 +102,7 @@ fun fold(type: Map<Int, Int>): Type? {
         mapOf(2 to 1, 3 to 1) -> Type.FULLHOUSE
         mapOf(1 to 1, 4 to 1) -> Type.FOUROFAKIND
         mapOf(5 to 1) -> Type.FIVEOFAKIND
-        else -> null
+        else -> throw IllegalArgumentException("Unknown hand type for: $type")
     }
 }
 
