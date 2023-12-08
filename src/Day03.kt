@@ -7,6 +7,30 @@ data class Location(val x: Int, val y: Int, val value: Char) {
     }
 }
 
+data class LocationNumber(val x: Int, val y: Int, val value: Int) {
+    override fun hashCode(): Int {
+        var hash = 7
+        hash = 31 * hash + x
+        hash = 31 * hash + y
+        hash = 31 * hash + value
+
+        return hash
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LocationNumber
+
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (value != other.value) return false
+
+        return true
+    }
+}
+
 class Grid(input: List<String>) {
     val rows = mutableListOf<MutableList<Location>>()
 
@@ -143,7 +167,7 @@ class Grid(input: List<String>) {
         return neighbours
     }
 
-    fun getNumber(x: Int, y: Int): Int {
+    fun getNumber(x: Int, y: Int): LocationNumber {
         var startY = y
 
         // go back until we find a non digit character
@@ -164,7 +188,7 @@ class Grid(input: List<String>) {
             }
         }
 
-        return numbers.toInt()
+        return LocationNumber(x, startY, numbers.toInt())
     }
 }
 
@@ -207,9 +231,7 @@ fun main() {
                 val neighbours = schematic.getNeighbours(x, y)
                     .filter { digits.matches(it.toString()) }
 
-                neighbours.println()
-
-                val set = mutableListOf<Int>()
+                val set = mutableSetOf<LocationNumber>()
 
                 if (neighbours.size > 1) {
                     for (neighbour in neighbours) {
@@ -218,7 +240,6 @@ fun main() {
                     }
 
                     if (set.size != 2) {
-                        set.println()
                         println("Something has gone sideways")
                     }
 
