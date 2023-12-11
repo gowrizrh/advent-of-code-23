@@ -4,21 +4,22 @@ import kotlin.math.abs
 fun main() {
     val input = readInput("Day10")
     val map = Map(input)
-    val start = Pipe(1, 1, '.')
-    val end = Pipe(3, 3, 'J')
-    val pathFinder = Path(map, start, end)
 
-    pathFinder.findPath()
+    val pathFinder = Path(map, map.start, map.start)
 
+    pathFinder.astar()
 
     return
 }
 
-class Path(val map: Map, val start: Pipe, val end: Pipe) {
+class Path(val map: Map, private val start: Pipe, private val end: Pipe) {
 
-
-    // TODO: Change name
-    fun findPath() {
+    /**
+     * A star will actually fail to find the shortest path because there is only one path, but A star
+     * will exactly stop at the mid-point because at that stage, we would have visited all possible nodes
+     * from both directions. So that's our midpoint. The G cost of that node is the answer
+     */
+    fun astar() {
         if (map.at(start) == '.') return
 
         val open = PriorityQueue<Pipe>()
@@ -27,13 +28,13 @@ class Path(val map: Map, val start: Pipe, val end: Pipe) {
         start.f = manhattan(start)
         open.add(start)
 
-        var current: Pipe
+        var current = start
 
         while (open.isNotEmpty()) {
             current = open.poll()
             closed.add(current)
 
-            if (current == end) println("Found path")
+            if (current == end && current.g != 0) return
 
             for (neighbour in map.neighbours(current)) {
                 if (map.at(neighbour) == '.' || closed.contains(neighbour)) continue;
@@ -49,9 +50,13 @@ class Path(val map: Map, val start: Pipe, val end: Pipe) {
                 }
             }
         }
+
+        // Potentially found midpoint of loop
+        current.g.println()
+        return
     }
 
-    fun manhattan(p: Pipe): Int {
+    private fun manhattan(p: Pipe): Int {
         val dx: Int = abs(p.x - end.x)
         val dy: Int = abs(p.y - end.y)
 
@@ -60,7 +65,9 @@ class Path(val map: Map, val start: Pipe, val end: Pipe) {
 }
 
 class Map(input: List<String>) {
-    val rows = mutableListOf<MutableList<Pipe>>()
+    private val rows = mutableListOf<MutableList<Pipe>>()
+
+    lateinit var start: Pipe
 
     init {
         for ((x, line) in input.withIndex()) {
@@ -68,14 +75,14 @@ class Map(input: List<String>) {
 
             for ((y, type) in line.withIndex()) {
                 column.add(Pipe(x, y, type))
+
+                if (type == 'S') {
+                    start = column[y]
+                }
             }
 
             rows.add(column)
         }
-    }
-
-    fun at(x: Int, y: Int): Char {
-        return rows[x][y].type
     }
 
     fun at(pipe: Pipe): Char {
@@ -84,11 +91,36 @@ class Map(input: List<String>) {
 
     fun neighbours(pipe: Pipe): List<Pipe> {
         val neighbours = mutableListOf<Pipe>()
+        val currentPipe = rows[pipe.x][pipe.y].type
 
-        if (pipe.y > 0) neighbours.add(rows[pipe.x][pipe.y - 1])
-        if (pipe.y < rows[0].size - 1) neighbours.add(rows[pipe.x][pipe.y + 1])
-        if (pipe.x > 0) neighbours.add(rows[pipe.x - 1][pipe.y])
-        if (pipe.x < rows.size - 1) neighbours.add(rows[pipe.x + 1][pipe.y])
+        if (pipe.y > 0) {
+            val type = rows[pipe.x][pipe.y - 1].type
+            if ((currentPipe == 'S' || currentPipe == '-' || currentPipe == '7' || currentPipe == 'J') && (type == '-' || type == 'F' || type == 'L')) {
+                neighbours.add(rows[pipe.x][pipe.y - 1])
+            }
+        }
+
+        if (pipe.y < rows[0].size - 1) {
+            val type = rows[pipe.x][pipe.y + 1].type
+            if ((currentPipe == 'S' || currentPipe == '-' || currentPipe == 'F' || currentPipe == 'L') && (type == '-' || type == 'J' || type == '7')) {
+                neighbours.add(rows[pipe.x][pipe.y + 1])
+            }
+        }
+
+        if (pipe.x > 0) {
+            val type = rows[pipe.x - 1][pipe.y].type
+            if ((currentPipe == 'S' || currentPipe == '|' || currentPipe == 'J' || currentPipe == 'L') && (type == '|' || type == 'F' || type == '7')) {
+                neighbours.add(rows[pipe.x - 1][pipe.y])
+            }
+        }
+
+        if (pipe.x < rows.size - 1) {
+            val type = rows[pipe.x + 1][pipe.y].type
+
+            if ((currentPipe == 'S' || currentPipe == '|' || currentPipe == 'F' || currentPipe == '7') && (type == '|' || type == 'L' || type == 'J')) {
+                neighbours.add(rows[pipe.x + 1][pipe.y])
+            }
+        }
 
         return neighbours
     }
