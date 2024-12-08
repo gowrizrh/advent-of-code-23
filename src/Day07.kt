@@ -1,4 +1,5 @@
 import kotlin.IllegalArgumentException
+import kotlin.collections.Map
 
 val power = mutableMapOf(
     'A' to 14,
