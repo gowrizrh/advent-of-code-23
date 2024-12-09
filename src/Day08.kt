@@ -9,8 +9,8 @@ fun main() {
     val input = readInput("Day08")
     val instructions = input.first()
 
-    input.removeFirst()
-    input.removeFirst()
+//    input.removeFirst()
+//    input.removeFirst()
 
     val startNode = "AAA"
 

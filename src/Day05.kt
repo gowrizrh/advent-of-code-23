@@ -17,7 +17,7 @@ val pipeline = listOf(
 fun main() {
     val input = readInput("Day05")
     val seeds = input[0].split(": ").last()
-    input.removeFirst()
+//    input.removeFirst()
 
     val almanacMaps = mutableMapOf<String, MutableMap<String, MutableList<Pair<ULong, ULong>>>>()
 
