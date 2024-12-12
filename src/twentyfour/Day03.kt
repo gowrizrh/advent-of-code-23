@@ -86,7 +86,6 @@ private fun part2(input: String): Int {
                     }
 
                     else -> {
-                        stack.clear()
                         break
                     }
                 }

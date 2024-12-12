@@ -12,7 +12,7 @@ fun main() {
     part2().println()
 }
 
-fun part1(): Int {
+private fun part1(): Int {
     val left = PriorityQueue<Int>()
     val right = PriorityQueue<Int>()
 
@@ -23,7 +23,7 @@ fun part1(): Int {
         val l = numbers.first().toInt()
         val r = numbers.last().toInt()
 
-        left.add(l);
+        left.add(l)
         right.add(r)
     }
 
@@ -32,7 +32,7 @@ fun part1(): Int {
     }
 }
 
-fun part2(): Int {
+private fun part2(): Int {
     val lines = readInput("twentyfour/Day01")
     val appearances = mutableMapOf<Int, Int>()
 
