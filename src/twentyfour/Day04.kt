@@ -41,15 +41,6 @@ private fun part1(input: List<String>): Int {
                         count++
                     }
 
-
-                    for (i in 0..<4) {
-                        if (y + i > grid[y].lastIndex) {
-                            break
-                        }
-
-                        word.append(grid[y + i][x])
-                    }
-
                     // Down: y + 1
                     for (i in 0..<4) {
                         if (y + i > grid[y].lastIndex) {
