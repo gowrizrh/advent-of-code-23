@@ -1,3 +1,7 @@
+package twentythree
+
+import println
+import readInput
 import kotlin.time.measureTime
 
 val withMapName = Regex(" map:")

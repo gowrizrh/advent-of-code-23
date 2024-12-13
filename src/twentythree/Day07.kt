@@ -1,3 +1,6 @@
+package twentythree
+
+import readInput
 import kotlin.IllegalArgumentException
 import kotlin.collections.Map
 

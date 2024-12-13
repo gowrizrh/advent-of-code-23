@@ -1,3 +1,7 @@
+package twentythree
+
+import println
+import readInput
 import kotlin.math.pow
 
 val regex = Regex("\\s+")

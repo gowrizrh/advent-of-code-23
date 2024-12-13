@@ -1,3 +1,7 @@
+package twentythree
+
+import readInput
+
 fun main() {
     val observations = readInput("Day09").map { it.split(" ").map { it.toInt() } }
 

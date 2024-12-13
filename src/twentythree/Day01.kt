@@ -1,3 +1,8 @@
+package twentythree
+
+import println
+import readInput
+
 fun main() {
     val lines = readInput("Day01")
 

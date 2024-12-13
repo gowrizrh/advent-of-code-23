@@ -1,3 +1,8 @@
+package twentythree
+
+import println
+import readInput
+
 val gameId = Regex("Game (?<id>\\d+):")
 
 fun main() {

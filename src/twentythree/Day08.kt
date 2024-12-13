@@ -1,3 +1,7 @@
+package twentythree
+
+import readInput
+
 val networkTry = Regex("(?<node>[A-Z]+) = \\((?<left>[A-Z]+), (?<right>[A-Z]+)\\)")
 
 enum class Direction {

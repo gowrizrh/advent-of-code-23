@@ -1,3 +1,7 @@
+package twentythree
+
+import readInput
+
 val symbols = Regex("[^0-9.]")
 val digits = Regex("[0-9]")
 

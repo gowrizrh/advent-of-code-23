@@ -4,6 +4,8 @@ import println
 import readInput
 
 fun main() {
+    println("--- Day 4: Ceres Search ---")
+
     val input = readInput("twentyfour/Day04")
 
     part1(input).println()
